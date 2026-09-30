@@ -8,41 +8,46 @@ import com.example.church_management_system.repository.financial.MemberContribut
 import com.example.church_management_system.service.financial.MemberContributionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class MemberContributionImpl implements MemberContributionService {
 
-    @Autowired
-    private MemberContributionRepository memberContributionRepository;
+    private final MemberContributionRepository memberContributionRepository;
+    private final MemberRegistrationRepository memberRegistrationRepository;
 
     @Autowired
-    private MemberRegistrationRepository memberRegistrationRepository;
-
+    public MemberContributionImpl(MemberContributionRepository memberContributionRepository,
+                                  MemberRegistrationRepository memberRegistrationRepository) {
+        this.memberContributionRepository = memberContributionRepository;
+        this.memberRegistrationRepository = memberRegistrationRepository;
+    }
 
     @Override
     public MemberContribution saveContribution(MemberContributionDto contributionDto) {
-        // Fetch the member entity using the member_id from the DTO
-        MemberRegistration member = memberRegistrationRepository.findById((long) contributionDto.getMember_id())
-                .orElseThrow(() -> new RuntimeException("Member not found with ID: " + contributionDto.getMember_id()));
+        MemberRegistration member = memberRegistrationRepository.findById(contributionDto.getMemberId())
+                .orElseThrow(() -> new RuntimeException("Member not found with ID: " + contributionDto.getMemberId()));
 
-        MemberContribution contribution = new MemberContribution();
-        contribution.setMember(member);
-        contribution.setMemberName(contributionDto.getMemberName());
-        contribution.setContributionType(contributionDto.getContributionType());
-        contribution.setAmount(contributionDto.getAmount());
-        contribution.setModeOfPayment(contributionDto.getModeOfPayment());
-        contribution.setDateOfContribution(contributionDto.getDateOfContribution());
+        MemberContribution contribution = MemberContribution.builder()
+                .member(member)
+                .memberName(contributionDto.getMemberName())
+                .contributionType(contributionDto.getContributionType())
+                .amount(contributionDto.getAmount())
+                .modeOfPayment(contributionDto.getModeOfPayment())
+                .dateOfContribution(contributionDto.getDateOfContribution())
+                .build();
 
         return memberContributionRepository.save(contribution);
     }
 
-
     @Override
-    public List<MemberContribution> getContributionsByMemberId(Long member_id) {
-        return memberContributionRepository.findByMember_Id(member_id);
+    @Transactional(readOnly = true)
+    public List<MemberContribution> getContributionsByMemberId(Long memberId) {
+        return memberContributionRepository.findByMember_Id(memberId);
     }
 
     @Override
@@ -67,6 +72,7 @@ public class MemberContributionImpl implements MemberContributionService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public MemberContribution getContributionById(Long id) {
         return memberContributionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Contribution not found with ID: " + id));

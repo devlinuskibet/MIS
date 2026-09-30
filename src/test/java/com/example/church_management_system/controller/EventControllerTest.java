@@ -1,7 +1,9 @@
 package com.example.church_management_system.controller;
 
+import com.example.church_management_system.config.JwtAuthenticationFilter;
 import com.example.church_management_system.controller.event.EventController;
 import com.example.church_management_system.dto.event.EventDto;
+import com.example.church_management_system.service.CustomUserDetailsService;
 import com.example.church_management_system.service.event.EventService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
@@ -25,6 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = EventController.class)
 @AutoConfigureMockMvc(addFilters = false)
+@ActiveProfiles("test")
 class EventControllerTest {
 
     @Autowired
@@ -32,6 +36,12 @@ class EventControllerTest {
 
     @MockBean
     private EventService eventService;
+
+    @MockBean
+    private CustomUserDetailsService customUserDetailsService;
+
+    @MockBean
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Autowired
     private ObjectMapper objectMapper;
