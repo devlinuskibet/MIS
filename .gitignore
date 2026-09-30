@@ -1,0 +1,47 @@
+# Target build directory
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# IDE Configuration files
+.idea/
+*.iws
+*.iml
+*.ipr
+.classpath
+.project
+.settings/
+.factorypath
+.apt_generated
+.springBeans
+.sts4-cache
+/.nb-gradle/
+/nbbuild/
+/dist/
+/nbdist/
+.vscode/
+
+# OS Generated Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs and databases
+*.log
+*.sqlite
+*.h2.db
+
+# Environment and sensitive keys
+.env
+*.pem
+*.key
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
